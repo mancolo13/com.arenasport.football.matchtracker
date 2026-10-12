@@ -10,8 +10,8 @@ class Tab3Screen extends StatefulWidget {
 }
 
 class _Tab3ScreenState extends State<Tab3Screen> {
-  int _score = 130;
-  bool _liveTracking = true;
+  bool _notificationAlerts = true;
+  bool _smartSync = true;
 
   @override
   Widget build(BuildContext context) {
@@ -23,57 +23,57 @@ class _Tab3ScreenState extends State<Tab3Screen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.stars_rounded, color: AppTheme.primary),
-            tooltip: 'Special Registration Offer',
+            tooltip: 'Special Offers',
             onPressed: () => RoutingService.openRegistrationUrl(),
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: AppTheme.card,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.35)),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.2)),
               ),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Stats Hub',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                      const Row(
+                        children: [
+                          Icon(Icons.tune_rounded, color: AppTheme.primary, size: 20),
+                          SizedBox(width: 8),
+                          Text('VAR & Goal Instant Alerts', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppTheme.textPrimary)),
+                        ],
                       ),
-                      Icon(Icons.query_stats, color: AppTheme.primary, size: 28),
+                      Switch(
+                        value: _smartSync,
+                        activeThumbColor: AppTheme.primary,
+                        onChanged: (v) => setState(() => _smartSync = v),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    '$_score',
-                    style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w900, color: AppTheme.primary),
-                  ),
-                  Text('Active Match Index', style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
-                  const SizedBox(height: 16),
+                  const Divider(height: 8, color: Colors.white10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ElevatedButton.icon(
-                        onPressed: () => setState(() => _score += 10),
-                        icon: const Icon(Icons.add),
-                        label: const Text('Add Stat'),
-                        style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary, foregroundColor: Colors.white),
+                      const Row(
+                        children: [
+                          Icon(Icons.notifications_active_outlined, color: AppTheme.secondary, size: 20),
+                          SizedBox(width: 8),
+                          Text('Tactical Heatmap Stream', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppTheme.textPrimary)),
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      OutlinedButton.icon(
-                        onPressed: () => setState(() => _liveTracking = !_liveTracking),
-                        icon: Icon(_liveTracking ? Icons.pause : Icons.play_arrow),
-                        label: Text(_liveTracking ? 'Live Feed' : 'Paused'),
-                        style: OutlinedButton.styleFrom(foregroundColor: AppTheme.primary),
+                      Switch(
+                        value: _notificationAlerts,
+                        activeThumbColor: AppTheme.secondary,
+                        onChanged: (v) => setState(() => _notificationAlerts = v),
                       ),
                     ],
                   ),
@@ -81,47 +81,102 @@ class _Tab3ScreenState extends State<Tab3Screen> {
               ),
             ),
             const SizedBox(height: 16),
-            Card(
-              color: AppTheme.surface,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: AppTheme.primary.withValues(alpha: 0.2),
-                  child: const Icon(Icons.emoji_events, color: AppTheme.primary),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Live Matchday Timeline', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.textPrimary)),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppTheme.surface,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text('4 KEY EVENTS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.textSecondary)),
                 ),
-                title: const Text('Exclusive Partner Registration', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                subtitle: const Text('Access exclusive live tournament matches and VIP promotions', style: TextStyle(fontSize: 12)),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.primary),
-                onTap: () => RoutingService.openRegistrationUrl(),
-              ),
+              ],
             ),
+            const SizedBox(height: 12),
+            _buildTimelineItem('Opening Header Goal (18\')', '1st Half', 'GOAL', Icons.sports_soccer_rounded, AppTheme.secondary),
+            const SizedBox(height: 10),
+            _buildTimelineItem('Tactical Yellow Card (42\')', '1st Half', 'CARD', Icons.warning_amber_rounded, AppTheme.primary),
+            const SizedBox(height: 10),
+            _buildTimelineItem('Corner Kick Volley (58\')', '2nd Half', 'GOAL', Icons.sports_soccer_rounded, AppTheme.secondary),
+            const SizedBox(height: 10),
+            _buildTimelineItem('Spectacular Penalty Save (71\')', '2nd Half', 'SAVE', Icons.shield_rounded, AppTheme.primary),
             const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppTheme.surface,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Match Schedule & Analytics', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  const SizedBox(height: 12),
-                  for (int i = 1; i <= 3; i++) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('League Match #$i', style: const TextStyle(color: AppTheme.textSecondary)),
-                        Text('${2 + i} : ${i - 1} FT', style: const TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold)),
-                      ],
+            SizedBox(
+              height: 48,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Заметка аналитика сохранена!'),
+                      duration: Duration(seconds: 1),
                     ),
-                    if (i < 3) const Divider(height: 16, color: Colors.white12),
-                  ],
-                ],
+                  );
+                },
+                icon: const Icon(Icons.add_circle_outline, size: 20),
+                label: const Text('Add Tactical Note', style: TextStyle(fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.surface,
+                  foregroundColor: AppTheme.primary,
+                  side: BorderSide(color: AppTheme.primary.withValues(alpha: 0.4)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTimelineItem(String title, String time, String badge, IconData icon, Color accent) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppTheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: accent, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textPrimary),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(time, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              badge,
+              style: TextStyle(color: accent, fontSize: 10, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
       ),
     );
   }
